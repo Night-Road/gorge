@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yourname.backen.mapper.TrainTravellerMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yourname.backen.entity.TrainTraveller">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="adult_flag" property="adultFlag" />
+        <result column="sex" property="sex" />
+        <result column="id_type" property="idType" />
+        <result column="id_number" property="idNumber" />
+        <result column="contact" property="contact" />
+        <result column="address" property="address" />
+        <result column="email" property="email" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, adult_flag, sex, id_type, id_number, contact, address, email
+    </sql>
+
+</mapper>

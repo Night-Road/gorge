@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yourname.backen.mapper.TrainSeatMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yourname.backen.entity.TrainSeat">
+        <id column="id" property="id"/>
+        <result column="ticket" property="ticket"/>
+        <result column="user_id" property="userId"/>
+        <result column="traveller_id" property="travellerId"/>
+        <result column="train_number_id" property="trainNumberId"/>
+        <result column="carriage_number" property="carriageNumber"/>
+        <result column="row_number" property="rowNumber"/>
+        <result column="seat_number" property="seatNumber"/>
+        <result column="seat_level" property="seatLevel"/>
+        <result column="train_start" property="trainStart"/>
+        <result column="train_end" property="trainEnd"/>
+        <result column="money" property="money"/>
+        <result column="show_number" property="showNumber"/>
+        <result column="status" property="status"/>
+        <result column="from_station_id" property="fromStationId"/>
+        <result column="to_station_id" property="toStationId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, ticket, user_id, traveller_id, train_number_id, carriage_number, row_number, seat_number, seat_level, train_start, train_end, money, show_number, status, from_station_id, to_station_id
+    </sql>
+    <update id="updateTrainStartAndTrainEnd">
+      update train_seat
+        set train_start = #{trainStart},
+         train_end = #{trainEnd}
+    </update>
+
+    <update id="batchPublish">
+        update train_seat
+        set status =1
+        where id in
+        <foreach collection="trainSeatIdList" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+        and train_number_id = #{trainNumberId}
+        and status = 0
+    </update>
+
+    <select id="searchAll" parameterType="map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from train_seat
+        where train_number_id = #{trainNumberId}
+        and ticket = #{ticket}
+        <if test="status != null">
+            and status = #{status}
+        </if>
+        <if test="carriageNum != null">
+            and carriage_number = #{carriageNum}
+        </if>
+        <if test="rowNum != null">
+            and row_number = #{rowNum}
+        </if>
+        <if test="seatNum != null">
+            and seat_number = #{seatNum}
+        </if>
+        limit #{offset},#{pageSize}
+    </select>
+
+    <select id="countList" parameterType="map" resultType="java.lang.Integer">
+        select count(1)
+        from train_seat
+        where train_number_id = #{trainNumberId}
+        and ticket = #{ticket}
+        <if test="status != null">
+            and status = #{status}
+        </if>
+        <if test="carriageNum != null">
+            and carriage_number = #{carriageNum}
+        </if>
+        <if test="rowNum != null">
+            and row_number = #{rowNum}
+        </if>
+        <if test="seatNum != null">
+            and seat_number = #{seatNum}
+        </if>
+    </select>
+
+
+</mapper>

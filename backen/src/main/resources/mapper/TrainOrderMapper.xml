@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yourname.backen.mapper.TrainOrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yourname.backen.entity.TrainOrder">
+        <id column="id" property="id" />
+        <result column="order_id" property="orderId" />
+        <result column="ticket" property="ticket" />
+        <result column="user_id" property="userId" />
+        <result column="train_number_id" property="trainNumberId" />
+        <result column="from_station_id" property="fromStationId" />
+        <result column="to_station_id" property="toStationId" />
+        <result column="create_time" property="createTime" />
+        <result column="train_start" property="trainStart" />
+        <result column="train_end" property="trainEnd" />
+        <result column="total_money" property="totalMoney" />
+        <result column="status" property="status" />
+        <result column="refund_status" property="refundStatus" />
+        <result column="expire_time" property="expireTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, order_id, ticket, user_id, train_number_id, from_station_id, to_station_id, create_time, train_start, train_end, total_money, status, refund_status, expire_time, update_time
+    </sql>
+
+</mapper>

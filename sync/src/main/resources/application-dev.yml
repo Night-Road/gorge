@@ -1,0 +1,113 @@
+
+spring:
+  # 配置数据源信息
+  datasource:
+    dynamic:
+      # 设置默认的数据源或者数据源组,默认值即为master
+      primary: master
+      # 严格匹配数据源,默认false.true未匹配到指定数据源时抛异常,false使用默认数据源
+      strict: false
+      datasource:
+        master:
+          type: com.alibaba.druid.pool.DruidDataSource
+          url: jdbc:mysql://10.100.76.116:3306/test1?characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          username: root
+          password: 1234567a
+        slave1:
+          type: com.alibaba.druid.pool.DruidDataSource
+          url: jdbc:mysql://10.100.76.116:3306/test?characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          username: root
+          password: 1234567a
+        order:
+          url: jdbc:mysql://10.100.76.116:3306/order?characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          username: root
+          password: 1234567a
+    druid:
+      time-between-eviction-runs-millis: 300000
+  shardingsphere:
+#    mode:
+#      type: Memory                                         # 内存模式，元数据保存在当前进程中
+    datasource:
+      names: seat1,seat2,seat3,seat4,seat0               # 数据源名称，这里有两个
+      seat1:                                               # 跟上面的数据源对应
+        type: com.alibaba.druid.pool.DruidDataSource       # 连接池
+        url: jdbc:mysql://10.100.76.116:3306/t_train_seat_1?characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+        # 连接url
+        username: root
+        password: 1234567a
+      seat2:                                               # 跟上面的数据源对应
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://10.100.76.116:3306/t_train_seat_2?characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+        username: root
+        password: 1234567a
+      seat3:                                               # 跟上面的数据源对应
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://10.100.76.116:3306/t_train_seat_3?characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+        username: root
+        password: 1234567a
+      seat4:                                               # 跟上面的数据源对应
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://10.100.76.116:3306/t_train_seat_4?characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+        username: root
+        password: 1234567a
+      seat0:                                               # 跟上面的数据源对应
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://10.100.76.116:3306/t_train_seat_5?characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+        username: root
+        password: 1234567a
+        poolPreparedStatements: true
+
+    sharding:
+      binding-tables:
+        - train_seat
+#      default-data-source-name: seat2
+      tables:
+        train_seat:                                            # 这个可以随便取，问题不大
+          actual-data-nodes: seat1.train_seat_$->{[1,6]}, seat2.train_seat_$->{[2,7]}, seat3.train_seat_$->{[3,8]},seat4.train_seat_$->{[4,9]}, seat0.train_seat_$->{[5,10]}
+          # 实际节点名称，格式为 库名$->{0..n1}          .表名$->{0..n2}
+            # 其中n1、n2分别为库数量-1和表数量-1
+            # 也可以使用${0..n1}的形式，但是会与Spring属性文件占位符冲突
+          # 所以使用$->{0..n1}的形式
+
+          database-strategy:                             # 分库策略
+            inline:                                    # 标准分库策略
+              sharding-column: train_number_id                       # 分库列名
+              algorithm-expression: seat$->{train_number_id % 5}           # 分库算法名字
+          table-strategy:                                # 分表策略
+            standard:                                    # 标准分表策略
+              sharding-column: train_number_id                        # 分表列名
+              precise-algorithm-class-name: com.yourname.sync.db.TrainSeatTableShardingAlgorithm        # 分表算法名字
+
+    #        sharding-algorithms:                               # 配置分库和分表的算法
+    #          age-mod:                                         # 分库算法名字
+    #            type: MOD                                      # 算法类型为取模
+    #            props:                                         # 算法配置的键名，所有算法配置都需要在props下
+    #              sharding-count: 5                            # 分片数量
+    #          id-mod:                                          # 分表算法名字
+    #            type: MOD                                      # 算法类型为取模
+    #            props:                                         # 算法配置的键名，所有算法配置都需要在props下
+    #              sharding-count: 10                            # 分片数量
+    props:
+      sql:
+       show: true                                       # 打印SQL
+
+
+  main:
+    allow-bean-definition-overriding: true
+  mvc:
+    view:
+      prefix: /WEB-INF/pages/
+      suffix: .jsp
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+logging:
+  level:
+    com.baomidou.dynamic: debug
+

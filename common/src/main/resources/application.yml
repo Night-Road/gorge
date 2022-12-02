@@ -1,0 +1,57 @@
+spring:
+  shardingsphere:
+#    mode:
+#      type: Memory                                         # 内存模式，元数据保存在当前进程中
+    datasource:
+      names: seat5                # 数据源名称，这里有两个
+      seat5:                                               # 跟上面的数据源对应
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://localhost:3306/t_train_seat_5?characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+        username: root
+        password: 123456
+        poolPreparedStatements: true
+
+    sharding:
+      binding-tables:
+        - train_seat
+#      default-data-source-name: seat2
+      tables:
+        train_seat:                                            # 这个可以随便取，问题不大
+          actual-data-nodes: seat5.train_seat_$->{[5,10]}
+          # 实际节点名称，格式为 库名$->{0..n1}          .表名$->{0..n2}
+            # 其中n1、n2分别为库数量-1和表数量-1
+            # 也可以使用${0..n1}的形式，但是会与Spring属性文件占位符冲突
+          # 所以使用$->{0..n1}的形式
+
+          table-strategy:                                # 分表策略
+            inline:                                    # 标准分表策略
+              sharding-column: id                        # 分表列名
+              algorithm-expression: train_seat_$->{id % 11}            # 分表算法名字
+
+          keyGenerator:
+            type: SNOWFLAKE
+            column: id
+    #        sharding-algorithms:                               # 配置分库和分表的算法
+    #          age-mod:                                         # 分库算法名字
+    #            type: MOD                                      # 算法类型为取模
+    #            props:                                         # 算法配置的键名，所有算法配置都需要在props下
+    #              sharding-count: 5                            # 分片数量
+    #          id-mod:                                          # 分表算法名字
+    #            type: MOD                                      # 算法类型为取模
+    #            props:                                         # 算法配置的键名，所有算法配置都需要在props下
+    #              sharding-count: 10                            # 分片数量
+    props:
+      sql:
+        show: true                                       # 打印SQL
+
+
+  main:
+    allow-bean-definition-overriding: true
+
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+
