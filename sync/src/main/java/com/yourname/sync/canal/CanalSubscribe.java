@@ -4,6 +4,7 @@ import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.client.CanalConnectors;
 import com.alibaba.otter.canal.protocol.CanalEntry.*;
 import com.alibaba.otter.canal.protocol.Message;
+import com.yourname.sync.service.TrainNumberService;
 import com.yourname.sync.service.TrainSeatServeice;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
@@ -27,6 +28,9 @@ import java.util.List;
 public class CanalSubscribe implements ApplicationListener<ContextRefreshedEvent> {
     @Resource
     TrainSeatServeice trainSeatServeice;
+
+    @Resource
+    TrainNumberService trainNumberService;
 
     @Override
     @Async("asyncServiceExecutor") //异步执行canal同步任务
@@ -111,8 +115,8 @@ public class CanalSubscribe implements ApplicationListener<ContextRefreshedEvent
             //处理座位变更
             trainSeatServeice.handle(columns, eventType);
         } else if (tableName.equals("train_number_detail")) {
-            //处理作为详情
-
+            //处理车次变更详情
+            trainNumberService.handle(columns,eventType);
         } else {
             log.info("你这该死的温柔");
         }

@@ -75,7 +75,8 @@ public class TrainSeatServeice {
                     trainNumber.getName() + "_" + trainseat.getTicket(),
                     trainseat.getCarriageNumber() + "_" + trainseat.getRowNumber() + "_" + trainseat.getSeatNumber()
                             + "_" + trainseat.getFromStationId() + "_" + trainseat.getToStationId(), "1"
-            );trainCacheService.hincr(trainNumber.getName() + "_" + trainseat.getTicket() + "_Count", trainseat.getFromStationId()
+            );
+            trainCacheService.hincr(trainNumber.getName() + "_" + trainseat.getTicket() + "_Count", trainseat.getFromStationId()
                     + "_" + trainseat.getToStationId(), -1l);
             log.info("seat-1,trainNumber:{},trainSeat:{}", trainNumber.getName(), trainseat);
         }else {
