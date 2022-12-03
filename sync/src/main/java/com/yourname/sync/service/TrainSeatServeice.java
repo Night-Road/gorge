@@ -55,7 +55,7 @@ public class TrainSeatServeice {
          * 1 :指定座位被占：hash
          * cacheKey: 车次_日期, for example:D386_20221106
          * filed:carriage_row_seat_fromStationId_toStationId
-         * value:0空的，1放票，2占座
+         * value:0空的，1占座
          *
          *
          */
@@ -64,23 +64,15 @@ public class TrainSeatServeice {
         if (trainseat.getStatus() == TrainSeatStatus.TICKET) {
             trainCacheService.hset(
                     trainNumber.getName() + "_" + trainseat.getTicket(),
-                    trainseat.getCarriageNumber() + "_" + trainseat.getRowNumber() + "_" + trainseat.getSeatNumber()
-                            + "_" + trainseat.getFromStationId() + "_" + trainseat.getToStationId(), "0"
+                    trainseat.getCarriageNumber() + "_" + trainseat.getRowNumber() + "_" + trainseat.getSeatLevel()
+                            + "_" +trainseat.getFromStationId()+"_"+trainseat.getToStationId(),"0"
             );
-            trainCacheService.hincr(trainNumber.getName() + "_" + trainseat.getTicket() + "_Count", trainseat.getFromStationId()
-                    + "_" + trainseat.getToStationId(), 1l);
-            log.info("seat+1,trainNumber:{},trainSeat:{}", trainNumber.getName(), trainseat);
         } else if (trainseat.getStatus() == TrainSeatStatus.OCCUPY_TICKET) {
             trainCacheService.hset(
                     trainNumber.getName() + "_" + trainseat.getTicket(),
-                    trainseat.getCarriageNumber() + "_" + trainseat.getRowNumber() + "_" + trainseat.getSeatNumber()
-                            + "_" + trainseat.getFromStationId() + "_" + trainseat.getToStationId(), "1"
+                    trainseat.getCarriageNumber() + "_" + trainseat.getRowNumber() + "_" + trainseat.getSeatLevel()
+                            + "_" +trainseat.getFromStationId()+"_"+trainseat.getToStationId(),"1"
             );
-            trainCacheService.hincr(trainNumber.getName() + "_" + trainseat.getTicket() + "_Count", trainseat.getFromStationId()
-                    + "_" + trainseat.getToStationId(), -1l);
-            log.info("seat-1,trainNumber:{},trainSeat:{}", trainNumber.getName(), trainseat);
-        }else {
-            log.info("status update not 1 or 2 ,no nees care");
         }
     }
 }

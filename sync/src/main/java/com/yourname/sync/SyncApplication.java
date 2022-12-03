@@ -6,14 +6,11 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.scheduling.annotation.EnableAsync;
 import redis.clients.jedis.JedisShardInfo;
 import redis.clients.jedis.ShardedJedisPool;
 
 import java.util.ArrayList;
 
-
-@EnableAsync
 @MapperScan("com.yourname")
 //@SpringBootApplication(exclude={DataSourceAutoConfiguration.class})
 @SpringBootApplication
@@ -26,7 +23,7 @@ public class SyncApplication {
     //定义redisCilent的实例
     @Bean(name = "shardedJedisPool")
     public ShardedJedisPool shardedJedisPool(){
-        JedisShardInfo jedisShardInfo = new JedisShardInfo("10.100.207.162",6379);
+        JedisShardInfo jedisShardInfo = new JedisShardInfo("10.100.76.116",6379);
         ArrayList<JedisShardInfo> jedisShardInforList = Lists.newArrayList(jedisShardInfo);
         GenericObjectPoolConfig config = new GenericObjectPoolConfig();
         ShardedJedisPool shardedJedisPool = new ShardedJedisPool(config, jedisShardInforList);

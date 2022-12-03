@@ -1,4 +1,18 @@
 spring:
+  #配置redis
+  redis:
+    database: 0
+    host: 10.100.207.162
+    port: 6379
+    password:
+    # 配置连接池
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: 1
+        max-idle: 8
+        min-idle: 0
+
   # 配置数据源信息
   datasource:
     dynamic:
