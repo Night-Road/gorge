@@ -8,6 +8,7 @@ import com.yourname.sync.service.TrainSeatServeice;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -28,22 +29,26 @@ public class CanalSubscribe implements ApplicationListener<ContextRefreshedEvent
     TrainSeatServeice trainSeatServeice;
 
     @Override
+    @Async("asyncServiceExecutor") //异步执行canal同步任务
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
+        log.info("all bean have been initialized successful!");
         canalSubscribe();
     }
 
+
     private void canalSubscribe() {
         // 创建链接
-        CanalConnector connector = CanalConnectors.newSingleConnector(new InetSocketAddress("127.0.0.1",
+        CanalConnector connector = CanalConnectors.newSingleConnector(new InetSocketAddress("10.100.207.162",
                 11111), "example", "", "");
         int batchSize = 1000;
 
-        new Thread(() -> {
+       // new Thread(() -> {
             try {
                 connector.connect();
                 connector.subscribe(".*\\..*");
                 connector.rollback();
                 log.info("canal启动成功");
+                //System.out.println(Thread.currentThread());
                 while (true) {
                     Message message = connector.getWithoutAck(batchSize); // 获取指定数量的数据
                     long batchId = message.getId();
@@ -69,9 +74,9 @@ public class CanalSubscribe implements ApplicationListener<ContextRefreshedEvent
             } finally {
                 connector.disconnect();
             }
-        }).start();
+        }//).start();
 
-    }
+    //}
 
     private void printEntry(List<Entry> entrys) {
         for (Entry entry : entrys) {

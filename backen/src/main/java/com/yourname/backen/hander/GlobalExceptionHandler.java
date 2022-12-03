@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = RuntimeException.class)
     @ResponseBody
     public R exceptionHandler(RuntimeException e){
-        log.error("Unknow exception",e);
+        //log.error("Unknow exception",e);
         if(e instanceof ParamException || e instanceof BusinessException){
             return R.failed(e.getMessage());
         }
