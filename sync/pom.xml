@@ -22,6 +22,14 @@
         <spring-boot.version>2.3.7.RELEASE</spring-boot.version>
     </properties>
 
+    <repository>
+        <id>elastic-lucene-snapshots</id>
+        <name>Elastic Lucene Snapshots</name>
+        <url>https://s3.amazonaws.com/download.elasticsearch.org/lucenesnapshots/83f9835</url>
+        <releases><enabled>true</enabled></releases>
+        <snapshots><enabled>false</enabled></snapshots>
+    </repository>
+
     <dependencies>
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -48,6 +56,27 @@
 <!--            <type>jar</type>-->
 <!--        </dependency>-->
 
+<!--        这里采用es的rest-high-clien，原因是spring对es的支持采用了transport通信方式，而se官方在7.0之后已经建议使用rest api 通信-->
+<!--        其接口编程方式更加适合面向对象这一编程理念，而且效率会有大幅度的提升，因此这里没有使用spring的spring-boot-starter-data- -->
+<!--        elasticsearch包进行数据的处理-->
+
+<!--        引入对es的支持-->
+
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-high-level-client</artifactId>
+            <version>7.16.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-client</artifactId>
+            <version>7.16.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>7.16.0</version>
+        </dependency>
         <dependency>
             <groupId>com.yourName</groupId>
             <artifactId>backen</artifactId>

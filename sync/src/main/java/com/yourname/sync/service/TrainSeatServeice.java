@@ -73,7 +73,7 @@ public class TrainSeatServeice {
 
         TrainNumber trainNumber = trainNumberMapper.selectById(trainSeat.getTrainNumberId());
 
-        if (trainSeat.getStatus() == TrainSeatStatus.TICKET) {
+        if (trainSeat.getStatus().equals(TrainSeatStatus.TICKET)) {
             //trainCacheService.hset(
             //        trainNumber.getName() + "_" + trainSeat.getTicket(),
             //        trainSeat.getCarriageNumber() + "_" + trainSeat.getRowNumber() + "_" + trainSeat.getSeatLevel()
@@ -84,9 +84,9 @@ public class TrainSeatServeice {
                             trainSeat.getFromStationId() + "_" + trainSeat.getToStationId(), "0");
             redisTemplate.opsForHash().increment(trainNumber.getName() + "_" + trainSeat.getTicket()+"_Count"
             ,trainSeat.getFromStationId() + "_" + trainSeat.getToStationId(), 1L);
-
+              //  int a = 2/0;
             log.info("seat+1,trainNumber:{},trainSeat:{}",trainNumber.getName(),trainSeat);
-        } else if (trainSeat.getStatus() == TrainSeatStatus.OCCUPY_TICKET) {
+        } else if (trainSeat.getStatus().equals(TrainSeatStatus.OCCUPY_TICKET)) {
             //trainCacheService.hset(
             //        trainNumber.getName() + "_" + trainSeat.getTicket(),
             //        trainSeat.getCarriageNumber() + "_" + trainSeat.getRowNumber() + "_" + trainSeat.getSeatLevel()
@@ -100,7 +100,7 @@ public class TrainSeatServeice {
 
             log.info("seat-1,trainNumber:{},trainSeat:{}",trainNumber.getName(),trainSeat);
         }else {
-            log.warn("没有修改座位状态，无需进入缓存");
+            log.info("没有修改座位状态，无需进入缓存");
         }
     }
 }

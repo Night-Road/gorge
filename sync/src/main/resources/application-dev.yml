@@ -106,9 +106,9 @@ spring:
     #            type: MOD                                      # 算法类型为取模
     #            props:                                         # 算法配置的键名，所有算法配置都需要在props下
     #              sharding-count: 10                            # 分片数量
-    props:
-      sql:
-       show: true                                       # 打印SQL
+#    props:
+#      sql:
+#       show: true                                       # 打印SQL
 
 
   main:
@@ -120,10 +120,10 @@ spring:
 
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 logging:
   level:
-    com.baomidou.dynamic: debug
+    com.baomidou.dynamic: info
 
