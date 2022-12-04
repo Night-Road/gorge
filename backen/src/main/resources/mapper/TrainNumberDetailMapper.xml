@@ -11,8 +11,8 @@
         <result column="to_station_id" property="toStationId" />
         <result column="to_city_id" property="toCityId" />
         <result column="station_index" property="stationIndex" />
-        <result column="relative_minute" property="relativeTime" />
-        <result column="wait_minute" property="waitTime" />
+        <result column="relative_time" property="relativeTime" />
+        <result column="wait_time" property="waitTime" />
         <result column="money" property="money" />
     </resultMap>
 

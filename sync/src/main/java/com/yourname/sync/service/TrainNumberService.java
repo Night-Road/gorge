@@ -1,6 +1,9 @@
 package com.yourname.sync.service;
 
-import com.alibaba.otter.canal.protocol.CanalEntry.*;
+import com.alibaba.otter.canal.protocol.CanalEntry.Column;
+import com.alibaba.otter.canal.protocol.CanalEntry.EventType;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yourname.backen.entity.TrainNumber;
 import com.yourname.backen.entity.TrainNumberDetail;
 import com.yourname.backen.mapper.TrainNumberDetailMapper;
@@ -8,7 +11,7 @@ import com.yourname.backen.mapper.TrainNumberMapper;
 import com.yourname.backen.util.JsonMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -29,16 +32,17 @@ public class TrainNumberService {
     @Resource
     private TrainNumberDetailMapper trainNumberDetailMapper;
 
-    @Autowired
-    private TrainCacheService trainCacheService;
+    //@Autowired
+    //private TrainCacheService trainCacheService;
 
+    @Resource
+    private RedisTemplate<Object, Object> redisTemplate;
 
     public void handle(List<Column> columns, EventType eventType) {
         if (eventType != EventType.UPDATE) {
             log.info("no need update,no need care");
             return;
         }
-
         //获取id
         int trainNumberId = 0;
         for (Column column : columns) {
@@ -52,12 +56,15 @@ public class TrainNumberService {
             log.error("not find trainNumber,trainNumberId:{}", trainNumberId);
             return;
         }
+       // Wrapper<TrainNumberDetail> wrapper =  new QueryWrapper<TrainNumberDetail>().eq("train_number_id",
+             //   trainNumberId);
         List<TrainNumberDetail> trainNumberDetails = trainNumberDetailMapper.selectAllByTrainNumberIdOrderByStationIndex(trainNumberId);
-        if(CollectionUtils.isEmpty(trainNumberDetails)){
-            log.warn("this trainNumber has no detail,id is {}",trainNumber.getName());
+      //  List<TrainNumberDetail> trainNumberDetails1 = trainNumberDetailMapper.selectList(wrapper);
+        if (CollectionUtils.isEmpty(trainNumberDetails)) {
+            log.warn("this trainNumber has no detail,id is {}", trainNumber.getName());
             return;
         }
-        trainCacheService.set("TN_"+trainNumber.getName(), JsonMapper.obj2String(trainNumberDetails));
-
+        redisTemplate.opsForValue().set("TN_" + trainNumber.getName(), JsonMapper.obj2String(trainNumberDetails));
+        log.info("车次信息已修改");
     }
 }

@@ -42,7 +42,7 @@ public class CanalSubscribe implements ApplicationListener<ContextRefreshedEvent
 
     private void canalSubscribe() {
         // 创建链接
-        CanalConnector connector = CanalConnectors.newSingleConnector(new InetSocketAddress("10.100.207.162",
+        CanalConnector connector = CanalConnectors.newSingleConnector(new InetSocketAddress("10.100.142.25",
                 11111), "example", "", "");
         int batchSize = 1000;
 
@@ -62,7 +62,7 @@ public class CanalSubscribe implements ApplicationListener<ContextRefreshedEvent
                         continue;
                     }
                     try {
-                        log.info("mew message,bitchId:{},size:{}", batchId, size);
+                        log.info("mew message1,bitchId:{},size:{}", batchId, size);
                         printEntry(message.getEntries());
                         connector.ack(batchId); // 提交确认
                     } catch (Exception e2) {
@@ -114,7 +114,7 @@ public class CanalSubscribe implements ApplicationListener<ContextRefreshedEvent
         if (schemeName.contains("train_seat")) {
             //处理座位变更
             trainSeatServeice.handle(columns, eventType);
-        } else if (tableName.equals("train_number_detail")) {
+        } else if (tableName.equals("train_number")) {
             //处理车次变更详情
             trainNumberService.handle(columns,eventType);
         } else {
