@@ -38,7 +38,6 @@ public class CanalSubscribe implements ApplicationListener<ContextRefreshedEvent
      * @Author 你的名字
      * @Date 2022/12/4 13:46
      */
-    @Override
     @Async("asyncServiceExecutor") //异步执行canal同步任务
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         log.info("all bean have been initialized successful!");
@@ -117,7 +116,8 @@ public class CanalSubscribe implements ApplicationListener<ContextRefreshedEvent
         }
     }
 
-    private void handleColumn(List<Column> columns, EventType eventType, String schemeName, String tableName) throws Exception {
+    private void handleColumn(List<Column> columns, EventType eventType, String schemeName, String tableName) throws
+            Exception {
         if (schemeName.contains("train_seat")) {
             //处理座位变更
             trainSeatServeice.handle(columns, eventType);
