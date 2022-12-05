@@ -60,7 +60,6 @@ public class CanalSubscribe implements ApplicationListener<ContextRefreshedEvent
             log.info("canal启动成功");
             //System.out.println(Thread.currentThread());
             while (true) {
-                int i =5;
                 Message message = connector.getWithoutAck(batchSize); // 获取指定数量的数据
                 long batchId = message.getId();
                 int size = message.getEntries().size();
@@ -73,13 +72,9 @@ public class CanalSubscribe implements ApplicationListener<ContextRefreshedEvent
                     printEntry(message.getEntries());
                     connector.ack(batchId); // 提交确认
                 } catch (Exception e2) {
-                    i--;
                     log.error("数据同步失败，将回滚数据，并在十秒后重试！");
-                    if(i>=0){
-                        Thread.sleep(10 * 1000);
+                        safeSleep(10 * 1000);
                         connector.rollback(batchId); // 处理失败, 回滚数据
-                    }
-                    log.error("数据同步失败，释放连接");
                 }
             }
         } catch (Exception e3) {
@@ -94,7 +89,7 @@ public class CanalSubscribe implements ApplicationListener<ContextRefreshedEvent
 
     //}
 
-    private void printEntry(List<Entry> entrys) {
+    private void printEntry(List<Entry> entrys) throws Exception {
         for (Entry entry : entrys) {
             if (entry.getEntryType() == EntryType.TRANSACTIONBEGIN || entry.getEntryType() == EntryType.TRANSACTIONEND) {
                 continue;
@@ -122,7 +117,7 @@ public class CanalSubscribe implements ApplicationListener<ContextRefreshedEvent
         }
     }
 
-    private void handleColumn(List<Column> columns, EventType eventType, String schemeName, String tableName) {
+    private void handleColumn(List<Column> columns, EventType eventType, String schemeName, String tableName) throws Exception {
         if (schemeName.contains("train_seat")) {
             //处理座位变更
             trainSeatServeice.handle(columns, eventType);

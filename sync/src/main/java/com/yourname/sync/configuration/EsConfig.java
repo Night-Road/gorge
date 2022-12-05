@@ -31,7 +31,7 @@ public class EsConfig {
 
     @Bean
     public RestHighLevelClient Client() {
-        log.info("es init start");
+        log.info("es client init start");
         RestClientBuilder builder = RestClient.builder(new HttpHost(IpConfig.IP,
                 9200, "http"));
         builder.setDefaultHeaders(basicHeaders).
@@ -42,7 +42,7 @@ public class EsConfig {
                     return configBuilder;
                 });
         RestHighLevelClient restHighLevelClient = new RestHighLevelClient(builder);
-        log.info("es init end");
+        log.info("es client init end");
         return restHighLevelClient;
     }
 }

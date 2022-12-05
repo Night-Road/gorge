@@ -1,6 +1,8 @@
 package com.yourname.sync.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.get.MultiGetRequest;
@@ -53,11 +55,22 @@ public class EsService {
             throw e;
         }
     }
-    public MultiGetResponse multiGet(MultiGetRequest multiGetRequest) throws Exception{
+
+    public MultiGetResponse multiGet(MultiGetRequest multiGetRequest) throws Exception {
         try {
-            return esClient.multiGet(multiGetRequest,RequestOptions.DEFAULT);
-        }catch (Exception e){
+            return esClient.multiGet(multiGetRequest, RequestOptions.DEFAULT);
+        } catch (Exception e) {
             log.error("es.multiGet error");
+            throw e;
+        }
+    }
+
+    public BulkResponse bulk(BulkRequest bulkRequest) throws Exception {
+        try {
+            return esClient.bulk(bulkRequest, RequestOptions.DEFAULT);
+        } catch (Exception e) {
+            log.error("es.bulk error");
+            e.printStackTrace();
             throw e;
         }
     }
