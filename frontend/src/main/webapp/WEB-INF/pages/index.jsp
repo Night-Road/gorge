@@ -150,7 +150,7 @@
 {{#numberList}}
 <tr role="row" class="number-name odd" data-id="{{number}}">
     <td>{{number}}</td>
-    <td>{{leftCount}}</td>
+    <td>{{countLeft}}</td>
     <td>
         <div class="hidden-sm hidden-xs action-buttons">
             <a class="green grab_ticket" href="#" data-id="{{number}}">

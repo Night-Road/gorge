@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @MapperScan("com.yourname")
-@SpringBootApplication(scanBasePackages = {"com.yourname"})
+@SpringBootApplication
 public class FrontendApplication {
 
     public static void main(String[] args) {

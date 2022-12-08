@@ -11,14 +11,11 @@ import com.yourname.backen.util.JsonMapper;
 import com.yourname.frontend.Dto.TrainNumberLeftDto;
 import com.yourname.frontend.param.SearchCountLeftParam;
 import com.yourname.sync.common.TrainESConstant;
-import com.yourname.sync.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -62,14 +59,14 @@ public class TrainSeatService {
             return dtoList;
         } else {
             String trainNumbers = (String) map.get(TrainESConstant.COLUMN_TRAIN_NUMBER);
-            List<String> numberList = Splitter.on(".").omitEmptyStrings().splitToList(trainNumbers);
+            List<String> numberList = Splitter.on(",").omitEmptyStrings().splitToList(trainNumbers);
             numberList.parallelStream().forEach(trainNumberName -> {
                 //查询车次
                 TrainNumber trainNumber = trainNumberService.findByName(trainNumberName);
                 if(trainNumber==null)return;
                 //获取车次详情
-                String deteilStrr = (String) redisTemplate.opsForValue().get("TN_"+trainNumberName);
-                List<TrainNumberDetail> detailList = JsonMapper.string2Obj(deteilStrr,
+                String deteilStr = (String) redisTemplate.opsForValue().get("TN_"+trainNumberName);
+                List<TrainNumberDetail> detailList = JsonMapper.string2Obj(deteilStr,
                         new TypeReference<List<TrainNumberDetail>>() {});
 
 

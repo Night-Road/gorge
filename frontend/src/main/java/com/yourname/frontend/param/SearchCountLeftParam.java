@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -22,7 +22,8 @@ public class SearchCountLeftParam {
     private int fromStationId;
 
     private int toStationId;
-    @NotBlank(message = "日期不可以为空")
+
+    @NotNull(message = "日期不可以为空")
     @Size(max = 8, min = 8, message = "日期不合法")
     private String date;
 }

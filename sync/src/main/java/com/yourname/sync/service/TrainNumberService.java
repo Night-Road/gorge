@@ -67,10 +67,10 @@ public class TrainNumberService {
         }
         //redis 存储车次信息
         redisTemplate.opsForValue().set("TN_" + trainNumber.getName(), JsonMapper.obj2String(trainNumberDetails));
-        log.info("车次{}信息已修改", trainNumber.getName());
+        log.info("Redis车次{}信息已修改", trainNumber.getName());
 
         //es 存储车次信息
-       esService.savaEs(trainNumberDetails, trainNumber);
+        esService.savaEs(trainNumberDetails, trainNumber);
     }
 }
 
