@@ -6,5 +6,5 @@ package com.yourname.sync.configuration;
  * @Date 2022/12/4 15:23
  */
 public interface IpConfig {
-    String IP = "10.100.66.205";
+    String IP = "10.100.220.234";
 }

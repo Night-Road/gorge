@@ -24,7 +24,7 @@ import java.util.Map;
  * @Date 10/12/2022 11:26 AM
  */
 
-@Configuration
+@Configuration("aaa")
 @AutoConfigureBefore({DynamicDataSourceAutoConfiguration.class,
         SpringBootConfiguration.class})
 public class DataSourceConfiguration {

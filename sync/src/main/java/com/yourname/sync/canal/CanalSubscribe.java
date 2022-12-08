@@ -6,7 +6,7 @@ import com.alibaba.otter.canal.protocol.CanalEntry.*;
 import com.alibaba.otter.canal.protocol.Message;
 import com.yourname.sync.configuration.IpConfig;
 import com.yourname.sync.service.TrainNumberService;
-import com.yourname.sync.service.TrainSeatServeice;
+import com.yourname.sync.service.TrainSeatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -28,7 +28,7 @@ import java.util.List;
 @Slf4j
 public class CanalSubscribe implements ApplicationListener<ContextRefreshedEvent> {
     @Resource
-    TrainSeatServeice trainSeatServeice;
+    TrainSeatService trainSeatService;
 
     @Resource
     TrainNumberService trainNumberService;
@@ -120,7 +120,7 @@ public class CanalSubscribe implements ApplicationListener<ContextRefreshedEvent
             Exception {
         if (schemeName.contains("train_seat")) {
             //处理座位变更
-            trainSeatServeice.handle(columns, eventType);
+            trainSeatService.handle(columns, eventType);
         } else if (tableName.equals("train_number")) {
             //处理车次变更详情
             trainNumberService.handle(columns, eventType);

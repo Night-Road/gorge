@@ -1,0 +1,9 @@
+spring:
+  profiles:
+#    include: dev
+    active: dev
+
+  application:
+    name: frontend
+server:
+  port: 8088

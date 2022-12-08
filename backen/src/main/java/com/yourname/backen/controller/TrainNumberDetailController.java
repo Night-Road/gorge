@@ -4,6 +4,7 @@ package com.yourname.backen.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yourname.backen.common.R;
 import com.yourname.backen.dto.TrainNumberDetailDto;
+import com.yourname.backen.dtoMapper.TrainNumberDetailConvertor;
 import com.yourname.backen.entity.TrainNumber;
 import com.yourname.backen.entity.TrainNumberDetail;
 import com.yourname.backen.entity.TrainStation;
@@ -14,7 +15,6 @@ import com.yourname.backen.param.TrainNumberDetailParam;
 import com.yourname.backen.service.impl.TrainNumberDetailServiceImpl;
 import com.yourname.backen.service.impl.TrainNumberServiceImpl;
 import com.yourname.backen.service.impl.TrainStationServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,17 +37,20 @@ import java.util.stream.Collectors;
 @RequestMapping("admin/train/numberDetail")
 public class TrainNumberDetailController {
 
-    @Autowired
+    @Resource
     TrainNumberDetailServiceImpl trainNumberDetailService;
     @Resource
     TrainNumberMapper trainNumberMapper;
     @Resource
     TrainNumberDetailMapper trainNumberDetailMapper;
-    @Autowired
+    @Resource
     TrainStationServiceImpl trainStationService;
 
-    @Autowired
+    @Resource
     TrainNumberServiceImpl trainNumberService;
+
+    @Resource
+    TrainNumberDetailConvertor trainNumberDetailConvertor;
 
     @RequestMapping("list.page")
     public String page() {
@@ -63,20 +66,24 @@ public class TrainNumberDetailController {
         List<TrainNumber> trainNumberList = trainNumberService.list();
         Map<Integer, String> numberMap = trainNumberList.stream().collect(Collectors.toMap(TrainNumber::getId, TrainNumber::getName));
         List<TrainNumberDetail> dtoList = trainNumberDetailList.stream().map(detail -> {
-            TrainNumberDetailDto dto = new TrainNumberDetailDto();
-            dto.setId(detail.getId());
+            //TrainNumberDetailDto dto = new TrainNumberDetailDto();
+            //dto.setId(detail.getId());
+            //dto.setFromStation(stationMap.get(detail.getFromStationId()));
+            //dto.setToStation(stationMap.get(detail.getToStationId()));
+            //dto.setFromCityId(detail.getFromCityId());
+            //dto.setToCityId(detail.getToCityId());
+            //dto.setFromStationId(detail.getFromStationId());
+            //dto.setToStationId(detail.getToStationId());
+            //dto.setTrainNumberId(detail.getTrainNumberId());
+            //dto.setTrainNumber(numberMap.get(detail.getTrainNumberId()));
+            //dto.setStationIndex(detail.getStationIndex());
+            //dto.setRelativeTime(detail.getRelativeTime());
+            //dto.setWaitTime(detail.getWaitTime());
+            //dto.setMoney(detail.getMoney());
+            TrainNumberDetailDto dto= trainNumberDetailConvertor.trainNumberDetailToDto(detail);
             dto.setFromStation(stationMap.get(detail.getFromStationId()));
             dto.setToStation(stationMap.get(detail.getToStationId()));
-            dto.setFromCityId(detail.getFromCityId());
-            dto.setToCityId(detail.getToCityId());
-            dto.setFromStationId(detail.getFromStationId());
-            dto.setToStationId(detail.getToStationId());
-            dto.setTrainNumberId(detail.getTrainNumberId());
             dto.setTrainNumber(numberMap.get(detail.getTrainNumberId()));
-            dto.setStationIndex(detail.getStationIndex());
-            dto.setRelativeTime(detail.getRelativeTime());
-            dto.setWaitTime(detail.getWaitTime());
-            dto.setMoney(detail.getMoney());
             return dto;
         }).collect(Collectors.toList());
         return R.success(dtoList);

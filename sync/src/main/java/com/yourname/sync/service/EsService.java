@@ -18,7 +18,6 @@ import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -92,7 +91,7 @@ public class EsService {
      * @Date 2022/12/4 17:13
      * trainNumber与它的trainNumberDetailList
      */
-    @Async("asyncServiceExecutor")
+   // @Async("asyncServiceExecutor")
     public void savaEs(List<TrainNumberDetail> trainNumberDetailList, TrainNumber trainNumber) throws Exception {
         ArrayList<String> list =
                 Lists.newArrayListWithExpectedSize(trainNumberDetailList.size() * trainNumberDetailList.size());

@@ -12,13 +12,12 @@ import com.yourname.backen.entity.TrainStation;
 import com.yourname.backen.param.GenerateTicketParam;
 import com.yourname.backen.param.PublishTicketParam;
 import com.yourname.backen.param.TrainSeatSearchParam;
-import com.yourname.backen.service.ITrainNumberDetailService;
-import com.yourname.backen.service.ITrainNumberService;
-import com.yourname.backen.service.ITrainSeatService;
-import com.yourname.backen.service.ITrainStationService;
+import com.yourname.backen.service.impl.TrainNumberDetailServiceImpl;
+import com.yourname.backen.service.impl.TrainNumberServiceImpl;
+import com.yourname.backen.service.impl.TrainSeatServiceImpl;
+import com.yourname.backen.service.impl.TrainStationServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -44,17 +44,17 @@ import java.util.stream.Collectors;
 @RequestMapping("admin/train/seat")
 public class TrainSeatController {
 
-    @Autowired
-    ITrainSeatService trainSeatService;
+    @Resource
+    TrainSeatServiceImpl trainSeatService;
 
-    @Autowired
-    ITrainNumberDetailService trainNumberDetailService;
+    @Resource
+    TrainNumberDetailServiceImpl trainNumberDetailService;
 
-    @Autowired
-    ITrainNumberService trainNumberService;
+    @Resource
+    TrainNumberServiceImpl trainNumberService;
 
-    @Autowired
-    ITrainStationService trainStationService;
+    @Resource
+    TrainStationServiceImpl trainStationService;
 
     @ApiOperation(value = "显示座位信息")
     @GetMapping(value = "list.page")

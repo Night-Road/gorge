@@ -3,11 +3,8 @@ package com.yourname.sync;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-
-@EnableCaching
 @EnableAsync
 @MapperScan("com.yourname")
 //@SpringBootApplication(exclude={DataSourceAutoConfiguration.class})
