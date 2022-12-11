@@ -20,4 +20,15 @@
         id, name, adult_flag, sex, id_type, id_number, contact, address, email
     </sql>
 
+    <select id="selectAllByIdList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from train_traveller
+        where id in
+        <foreach collection="idList" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+
+    </select>
+
 </mapper>

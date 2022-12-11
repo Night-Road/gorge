@@ -1,11 +1,13 @@
 package com.yourname.frontend.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.yourname.backen.entity.TrainNumber;
 import com.yourname.backen.entity.TrainNumberDetail;
 import com.yourname.backen.exception.BusinessException;
+import com.yourname.backen.mapper.TrainNumberDetailMapper;
 import com.yourname.backen.util.BeanValidator;
 import com.yourname.backen.util.JsonMapper;
 import com.yourname.frontend.Dto.TrainNumberLeftDto;
@@ -43,6 +45,9 @@ public class TrainSeatService {
     @Resource
     RedisTemplate<Object, Object> redisTemplate;
 
+    @Resource
+    TrainNumberDetailMapper trainNumberDetailMapper;
+
     public List<TrainNumberLeftDto> searchCountLeftService(SearchCountLeftParam param) throws Exception {
         //对参数进行校验
         BeanValidator.check(param);
@@ -63,11 +68,12 @@ public class TrainSeatService {
             numberList.parallelStream().forEach(trainNumberName -> {
                 //查询车次
                 TrainNumber trainNumber = trainNumberService.findByName(trainNumberName);
-                if(trainNumber==null)return;
+                if (trainNumber == null) return;
                 //获取车次详情
-                String deteilStr = (String) redisTemplate.opsForValue().get("TN_"+trainNumberName);
+                String deteilStr = (String) redisTemplate.opsForValue().get("TN_" + trainNumberName);
                 List<TrainNumberDetail> detailList = JsonMapper.string2Obj(deteilStr,
-                        new TypeReference<List<TrainNumberDetail>>() {});
+                        new TypeReference<List<TrainNumberDetail>>() {
+                        });
 
 
                 //封装map 1:{TrainNumberDetail}
@@ -85,8 +91,19 @@ public class TrainSeatService {
                 while (true) {
                     TrainNumberDetail trainNumberDetail = map1.get(curFromStationId);
                     if (trainNumberDetail == null) {
+                        //redis没有命中，去查数据库
+                        //TrainNumberDetail trainNumberDetail1 = trainNumberDetailMapper.selectOne(new QueryWrapper<TrainNumberDetail>().eq("from_station_id",
+                        //        curFromStationId));
+                        //if(trainNumberDetail !=null){
+                        //    //命中数据库，写入redis TODO
+                        //    //但是手工放票，不能直接查数据库
+                        //}else{
+                        if (curFromStationId == 12025875) {
+                            break;
+                        }
                         log.error("车次详情为空，车次为{}，起始车站为{}", trainNumberName, curFromStationId);
                         break;
+                        //}
                     } else {
                         //从redis中获取座位信息
                         //更新票数
@@ -99,7 +116,7 @@ public class TrainSeatService {
                     }
                     curFromStationId = trainNumberDetail.getToStationId();
                 }
-                if(isSuccess)dtoList.add(new TrainNumberLeftDto(trainNumber.getId(),trainNumberName,min));
+                if (isSuccess) dtoList.add(new TrainNumberLeftDto(trainNumber.getId(), trainNumberName, min));
             });
         }
         return dtoList;

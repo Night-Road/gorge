@@ -114,6 +114,7 @@ public class TrainNumberDetailController {
         TrainNumber trainNumber = trainNumberService.getOne(new QueryWrapper<TrainNumber>()
                 .eq("id", trainNumberDetail.getTrainNumberId()));
 
+        //用于前台显示为空
         trainNumberMapper.updateToStationIdById(12025875, trainNumber.getId());
         return R.success();
     }

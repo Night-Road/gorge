@@ -13,5 +13,12 @@
     <sql id="Base_Column_List">
         id, user_id, traveller_id
     </sql>
+    <select id="searchAllByUserId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from train_user_traveller
+        where
+        user_id = #{userId,jdbcType=NUMERIC}
+    </select>
 
 </mapper>

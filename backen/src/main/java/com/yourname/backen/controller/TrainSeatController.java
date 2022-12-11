@@ -17,6 +17,7 @@ import com.yourname.backen.service.impl.TrainNumberServiceImpl;
 import com.yourname.backen.service.impl.TrainSeatServiceImpl;
 import com.yourname.backen.service.impl.TrainStationServiceImpl;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
  * @author yourName
  * @since 2022-10-07
  */
+@Slf4j
 @Controller
 @RequestMapping("admin/train/seat")
 public class TrainSeatController {
@@ -115,6 +117,7 @@ public class TrainSeatController {
         TrainNumber trainNumber = trainNumberService.getOne(new QueryWrapper<TrainNumber>()
                 .eq("id", param.getTrainNumberId()));
         if (!trainSeatList.isEmpty()) {
+            log.info("开始生成座位");
             trainSeatService.saveBatch(trainSeatList, Integer.MAX_VALUE);
             return R.success();
         }
