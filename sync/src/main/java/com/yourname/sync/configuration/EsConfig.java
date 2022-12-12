@@ -29,8 +29,8 @@ public class EsConfig {
     };
 
 
-    @Bean
-    public RestHighLevelClient Client() {
+    @Bean("esClient")
+    public RestHighLevelClient esClient() {
         log.info("es client init start");
         RestClientBuilder builder = RestClient.builder(new HttpHost(IpConfig.IP,
                 9200, "http"));

@@ -32,6 +32,7 @@ import java.util.*;
 @Service
 public class EsService {
 
+
     @Resource
     RestHighLevelClient esClient;
 

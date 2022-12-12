@@ -77,25 +77,17 @@
         <!-- swagger核心包 -->
 
         <dependency>
-
             <groupId>io.springfox</groupId>
-
             <artifactId>springfox-swagger2</artifactId>
-
             <version>2.9.2</version>
-
         </dependency>
 
         <!-- swaggwe增强ui -->
 
         <dependency>
-
             <groupId>com.github.xiaoymin</groupId>
-
             <artifactId>swagger-bootstrap-ui</artifactId>
-
             <version>1.9.6</version>
-
         </dependency>
 
 
