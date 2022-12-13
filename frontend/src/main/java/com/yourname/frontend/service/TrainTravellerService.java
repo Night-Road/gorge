@@ -5,6 +5,7 @@ import com.yourname.backen.entity.TrainTraveller;
 import com.yourname.backen.entity.TrainUserTraveller;
 import com.yourname.backen.mapper.TrainTravellerMapper;
 import com.yourname.backen.mapper.TrainUserTravellerMapper;
+import com.yourname.backen.util.StringUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,11 @@ public class TrainTravellerService {
         trainUserTravellerList.forEach(t->{
             idList.add(t.getTravellerId());
                 });
+        return trainTravellerMapper.selectAllByIdList(idList);
+    }
+
+    public List<TrainTraveller> getByTravellerIds(String ids){
+        List<Long> idList = StringUtil.splitToListLong(ids);
         return trainTravellerMapper.selectAllByIdList(idList);
     }
 }

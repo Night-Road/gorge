@@ -1,15 +1,19 @@
 package com.yourname.frontend.controller;
 
 import com.yourname.backen.common.R;
+import com.yourname.backen.entity.TrainUser;
 import com.yourname.frontend.Dto.TrainNumberLeftDto;
+import com.yourname.frontend.param.RubTicketParam;
 import com.yourname.frontend.param.SearchCountLeftParam;
 import com.yourname.frontend.service.TrainSeatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -40,8 +44,16 @@ public class FrontController {
             log.error("查询失败");
             return R.failed("查询失败，请稍后重试");
         }
+    }
 
-
+    @ResponseBody
+    @PostMapping("grab.json")
+    public R getTicket(RubTicketParam param, HttpServletRequest request){
+        TrainUser user = (TrainUser)request.getSession().getAttribute("user");
+        if (user==null){
+            return R.failed(2,"用户未登录");
+        }
+        return R.success();
     }
 
 }

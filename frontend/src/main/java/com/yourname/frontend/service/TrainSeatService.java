@@ -6,14 +6,21 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.yourname.backen.entity.TrainNumber;
 import com.yourname.backen.entity.TrainNumberDetail;
+import com.yourname.backen.entity.TrainTraveller;
+import com.yourname.backen.entity.TrainUser;
 import com.yourname.backen.exception.BusinessException;
+import com.yourname.backen.exception.ParamException;
 import com.yourname.backen.mapper.TrainNumberDetailMapper;
 import com.yourname.backen.util.BeanValidator;
 import com.yourname.backen.util.JsonMapper;
+import com.yourname.backen.util.StringUtil;
 import com.yourname.frontend.Dto.TrainNumberLeftDto;
+import com.yourname.frontend.param.RubTicketParam;
 import com.yourname.frontend.param.SearchCountLeftParam;
 import com.yourname.sync.common.TrainESConstant;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.elasticsearch.action.get.GetRequest;
@@ -48,6 +55,16 @@ public class TrainSeatService {
     @Resource
     TrainNumberDetailMapper trainNumberDetailMapper;
 
+    @Resource
+    TrainTravellerService trainTravellerService;
+
+    /**
+     * 查询余票
+     *
+     * @param param
+     * @return
+     * @throws Exception
+     */
     public List<TrainNumberLeftDto> searchCountLeftService(SearchCountLeftParam param) throws Exception {
         //对参数进行校验
         BeanValidator.check(param);
@@ -70,15 +87,7 @@ public class TrainSeatService {
                 TrainNumber trainNumber = trainNumberService.findByName(trainNumberName);
                 if (trainNumber == null) return;
                 //获取车次详情
-                String deteilStr = (String) redisTemplate.opsForValue().get("TN_" + trainNumberName);
-                List<TrainNumberDetail> detailList = JsonMapper.string2Obj(deteilStr,
-                        new TypeReference<List<TrainNumberDetail>>() {
-                        });
-
-
-                //封装map 1:{TrainNumberDetail}
-                Map<Integer, TrainNumberDetail> map1 = detailList.stream().
-                        collect(Collectors.toMap(TrainNumberDetail::getFromStationId, t -> t));
+                Map<Integer, TrainNumberDetail> detailMap = getTrainNumberDetailWithFromStationInRedis(trainNumberName);
 
                 //遍历所有详情
                 int curFromStationId = param.getFromStationId();
@@ -89,7 +98,7 @@ public class TrainSeatService {
                 //redisKey
                 String seatKey = trainNumberName + "_" + param.getDate() + "_Count";
                 while (true) {
-                    TrainNumberDetail trainNumberDetail = map1.get(curFromStationId);
+                    TrainNumberDetail trainNumberDetail = detailMap.get(curFromStationId);
                     if (trainNumberDetail == null) {
                         //redis没有命中，去查数据库
                         //TrainNumberDetail trainNumberDetail1 = trainNumberDetailMapper.selectOne(new QueryWrapper<TrainNumberDetail>().eq("from_station_id",
@@ -120,5 +129,66 @@ public class TrainSeatService {
             });
         }
         return dtoList;
+    }
+
+    public void rubTicket(RubTicketParam param, TrainUser trainUser) {
+        BeanValidator.check(param);
+
+        //从db查询乘车人
+        List<TrainTraveller> travellers = trainTravellerService.getByTravellerIds(param.getTravellerIds());
+        if (CollectionUtils.isEmpty(travellers)) {
+            throw new BusinessException("乘车人不存在，请先指定乘车人");
+        }
+        //从缓存获取车次详情映射列表
+        Map<Integer, TrainNumberDetail> detailMap = getTrainNumberDetailWithFromStationInRedis(param.getNumberName());
+        //获取包含用户路线车次的车次详情
+        List<TrainNumberDetail> details = getTrainNumberDetailInUserWay(detailMap, param);
+        //从缓存中获取该车次的所有车票
+        redisTemplate.opsForHash().values(param.getNumberName());
+    }
+
+
+    private Map<Integer, TrainNumberDetail> getTrainNumberDetailWithFromStationInRedis(String trainNumberName) {
+        String deteilStr = (String) redisTemplate.opsForValue().get("TN_" + trainNumberName);
+        List<TrainNumberDetail> detailList = JsonMapper.string2Obj(deteilStr,
+                new TypeReference<List<TrainNumberDetail>>() {
+                });
+
+        Map<Integer, TrainNumberDetail> map = detailList.stream().
+                collect(Collectors.toMap(TrainNumberDetail::getFromStationId, t -> t));
+
+        return map;
+    }
+
+    /**
+     * 获取包含用户路线车次的车次详情
+     * @param detailMap
+     * @param param
+     * @return
+     */
+    private List<TrainNumberDetail> getTrainNumberDetailInUserWay(Map<Integer, TrainNumberDetail> detailMap,
+                                                                  RubTicketParam param){
+        ArrayList<TrainNumberDetail> details = Lists.newArrayListWithCapacity(detailMap.size());
+
+        int curFromStationId = param.getFromStationId();
+        int targetToStationId = param.getToStationId();
+
+        while (true) {
+            TrainNumberDetail trainNumberDetail = detailMap.get(curFromStationId);
+            if (trainNumberDetail == null) {
+                if (curFromStationId == 12025875) {
+                    break;
+                }
+                log.error("车次详情为空，车次为{}，起始车站为{}", param.getNumberName(), curFromStationId);
+                break;
+            } else {
+                details.add(trainNumberDetail);
+            }
+            if (trainNumberDetail.getToStationId() == targetToStationId) {
+                break;
+            }
+            curFromStationId = trainNumberDetail.getToStationId();
+        }
+        return details;
     }
 }

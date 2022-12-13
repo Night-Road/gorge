@@ -9,12 +9,12 @@ public class StringUtil {
 
     public static List<Long> splitToListLong(String str) {
         List<String> stringList = Splitter.on(",").trimResults().omitEmptyStrings().splitToList(str);
-        return stringList.stream().map(item -> Long.parseLong(item)).collect(Collectors.toList());
+        return stringList.stream().map(Long::parseLong).collect(Collectors.toList());
     }
 
     public static List<Integer> splitToListInt(String str) {
         List<String> stringList = Splitter.on(",").trimResults().omitEmptyStrings().splitToList(str);
-        return stringList.stream().map(item -> Integer.parseInt(item)).collect(Collectors.toList());
+        return stringList.stream().map(Integer::parseInt).collect(Collectors.toList());
     }
     /**
      * 下划线转驼峰
