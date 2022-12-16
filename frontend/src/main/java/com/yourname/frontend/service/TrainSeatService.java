@@ -1,28 +1,28 @@
 package com.yourname.frontend.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Table;
+import com.yourname.backen.common.TrainType;
+import com.yourname.backen.common.TrainTypeSeatConstant;
 import com.yourname.backen.entity.TrainNumber;
 import com.yourname.backen.entity.TrainNumberDetail;
 import com.yourname.backen.entity.TrainTraveller;
 import com.yourname.backen.entity.TrainUser;
 import com.yourname.backen.exception.BusinessException;
-import com.yourname.backen.exception.ParamException;
 import com.yourname.backen.mapper.TrainNumberDetailMapper;
 import com.yourname.backen.util.BeanValidator;
 import com.yourname.backen.util.JsonMapper;
-import com.yourname.backen.util.StringUtil;
 import com.yourname.frontend.Dto.TrainNumberLeftDto;
 import com.yourname.frontend.param.RubTicketParam;
 import com.yourname.frontend.param.SearchCountLeftParam;
 import com.yourname.sync.common.TrainESConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -139,12 +139,20 @@ public class TrainSeatService {
         if (CollectionUtils.isEmpty(travellers)) {
             throw new BusinessException("乘车人不存在，请先指定乘车人");
         }
+        //获取车次信息
+        TrainNumber trainNumber = trainNumberService.findByName(param.getNumberName());
         //从缓存获取车次详情映射列表
         Map<Integer, TrainNumberDetail> detailMap = getTrainNumberDetailWithFromStationInRedis(param.getNumberName());
         //获取包含用户路线车次的车次详情
         List<TrainNumberDetail> details = getTrainNumberDetailInUserWay(detailMap, param);
         //从缓存中获取该车次的所有车票
-        redisTemplate.opsForHash().values(param.getNumberName());
+        Map seatMap = redisTemplate.opsForHash().entries(param.getNumberName());
+        //指定车次座位布局情况
+        TrainType trainType = TrainType.valueOf(trainNumber.getTrainType());
+        Table<Integer, Integer, Pair<Integer, Integer>> seatTable = TrainTypeSeatConstant.getTable(trainType);
+
+
+
     }
 
 
